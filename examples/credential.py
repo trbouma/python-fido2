@@ -37,6 +37,8 @@ from fido2.server import Fido2Server
 from getpass import getpass
 import sys
 import ctypes
+import json
+import base64
 
 
 # Handle user interaction
@@ -94,8 +96,16 @@ create_options, state = server.register_begin(
     user, user_verification=uv, authenticator_attachment="cross-platform"
 )
 
+
 # Create a credential
 result = client.make_credential(create_options["publicKey"])
+
+client_data_json_dict = json.loads(result.client_data)
+print(client_data_json_dict)
+client_data_base64 =base64.b64encode(json.dumps(client_data_json_dict).encode()).decode()
+print(client_data_base64)
+
+# attestation_data_json_dict = json.loads(result.attestation_object)
 
 # Complete registration
 auth_data = server.register_complete(
